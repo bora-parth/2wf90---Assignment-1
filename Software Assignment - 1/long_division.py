@@ -40,6 +40,38 @@ def list_to_string(num_list):
             string += 'f'
     return string
 
+def bigger(x, y, radix):
+    if x == y:
+        return 0
+
+    x = string_to_list(x)
+    y = string_to_list(y)
+    sign_x = '+'
+    if x[0] == '-':
+        sign_x = '-'
+
+    sign_y = '+'
+    if y[0] == '-':
+        sign_y = '-'
+
+    if sign_x == '+' and sign_y == 'y':
+        return list_to_string(x)
+
+    if sign_x == '-' and sign_y == '+':
+        return list_to_string(y)
+
+    subtraction = subtract(x, y, radix)
+
+    sign_subtraction = '+'
+    if subtraction[0] == '-':
+        sign_subtraction = '-'
+
+    if sign_subtraction == sign_x:
+        return list_to_string(x)
+    
+    return list_to_string(y)
+    
+
 
 #Long Division function (Algorithm 1.5)
 #
@@ -113,6 +145,51 @@ def long_division(x, y, radix):
     r = r.lstrip("0")
 
     return [q,r]
+
+#Modular Reduction Function
+#returns the remainder from the long division function
+def modular_reduction(x, m, radix):
+    modulo = long_division(x, m, radix)[1]
+    return modulo
+
+#Modular Addition Function
+#implemented according to algortihm 2.7
+def modular_addition(x, y, m, radix):
+    a = modular_reduction(x, m, radix)
+    b = modular_reduction(y, m, radix)
+    #z1 = z'
+    z1 = addition(a,b, radix)
+    if bigger(z1, m, radix) == m:
+        z = z1
+    else:
+        z = subtraction(z1,m, radix)
+    return z
+
+#modular subtraction function
+#implemented according to algortihm 2.8
+def modular_subtraction(x, y, m, radix):
+    a = modular_reduction(x, m, radix)
+    b = modular_reduction(y, m, radix)
+    #z1 = z'
+    z1 = subtraction(a,b, radix)
+    if z1[0] != '-':
+        z = z1
+    else:
+        z = addition(z1,m, radix)
+    return z
+
+#modular muliplication function
+#implemented according to algortihm 2.9
+def modular_multiplication(x, y, m, radix):
+    a = modular_reduction(x, m, radix)
+    b = modular_reduction(y, m, radix)
+    #z1 = z'
+    z1 = multiplication(a, b, radix)
+    z = modular_reduction(z1, m, radix)
+    return z
+
+
+
 
 a = 'd26936c465648ef03a1ade904737b30428155781'
 b = '157f77a46f4c796bb774'
