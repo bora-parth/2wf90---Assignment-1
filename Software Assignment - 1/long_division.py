@@ -1,6 +1,8 @@
 #helper functions
+from main import subtraction, addition, multiplicationPrimary
 
 #converts the input strings to an array
+
 def string_to_list(num):
     num_list = []
     for i in num:
@@ -60,13 +62,13 @@ def bigger(x, y, radix):
     if sign_x == '-' and sign_y == '+':
         return list_to_string(y)
 
-    subtraction = subtract(x, y, radix)
+    res = subtraction(x, y, radix, 0, 0)
 
-    sign_subtraction = '+'
+    sign_res = '+'
     if subtraction[0] == '-':
-        sign_subtraction = '-'
+        sign_res = '-'
 
-    if sign_subtraction == sign_x:
+    if sign_res == sign_x:
         return list_to_string(x)
     
     return list_to_string(y)
@@ -158,7 +160,7 @@ def modular_addition(x, y, m, radix):
     a = modular_reduction(x, m, radix)
     b = modular_reduction(y, m, radix)
     #z1 = z'
-    z1 = addition(a,b, radix)
+    z1 = addition(a,b, radix,0,0)[0]
     if bigger(z1, m, radix) == m:
         z = z1
     else:
@@ -171,7 +173,7 @@ def modular_subtraction(x, y, m, radix):
     a = modular_reduction(x, m, radix)
     b = modular_reduction(y, m, radix)
     #z1 = z'
-    z1 = subtraction(a,b, radix)
+    z1 = subtraction(a,b, radix,0,0)[0]
     if z1[0] != '-':
         z = z1
     else:
@@ -184,13 +186,33 @@ def modular_multiplication(x, y, m, radix):
     a = modular_reduction(x, m, radix)
     b = modular_reduction(y, m, radix)
     #z1 = z'
-    z1 = multiplication(a, b, radix)
+    z1 = multiplicationPrimary(a, b, radix)
     z = modular_reduction(z1, m, radix)
     return z
 
+def modular_inversion(x, m, radix):
+    x1 = x #a'
+    m1 = m
+    a1 = '1' #x1
+    a2 = '2' #x2
+    while m1[0] != '-' or m1[0] != '0':
 
+        q = long_division(x1, m1, radix)[0]
+        temp = multiplicationPrimary(q, m1, radix, 0, 0)
+        r = subtraction(x1, temp)
+        a1 = m1
+        m1 = r
+        temp = multiplicationPrimary(q, a2, radix, 0, 0)
+        a3 = subtraction(a1, temp)
+        a1 = a2
+        a2 = a3
+
+    if x1 == '1':
+        return x1
+    else:
+        return "ERROR - INVERSE DOESN'T EXIST"
 
 
 a = 'd26936c465648ef03a1ade904737b30428155781'
 b = '157f77a46f4c796bb774'
-print(long_division(a,b,16))
+print(modular_addition(a,b, '12', 16))
